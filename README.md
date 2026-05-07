@@ -1,8 +1,9 @@
 # AgentGuard402
 
-[![Powered by Sentry402](https://img.shields.io/badge/engine-Sentry402-d4a017?style=flat-square)](https://sentry402.vercel.app)
-[![x402 Protocol](https://img.shields.io/badge/x402-Base%20Sepolia-06b6d4?style=flat-square)](https://x402.org)
-[![Built for agents](https://img.shields.io/badge/built%20for-AI%20agents-0c4a6e?style=flat-square)](#)
+[![Powered by Sentry402](https://img.shields.io/badge/engine-Sentry402-a8211b?style=flat-square)](https://sentry402.vercel.app)
+[![x402 Protocol](https://img.shields.io/badge/x402-Base%20Sepolia-0d0d0d?style=flat-square)](https://x402.org)
+[![Rule pack](https://img.shields.io/badge/rule__pack-0.3.0--mvp-3a5a40?style=flat-square)](./lib/rule-pack.ts)
+[![Coverage](https://img.shields.io/badge/test--coverage-27%20wallets-3a5a40?style=flat-square)](./TESTING.md)
 
 **An x402 firewall for AI agents. Two cents per pre-flight check between your agent and a sanctioned wallet.**
 
@@ -130,25 +131,46 @@ Visit <https://agentguard402.vercel.app> and paste any destination. Free preview
 
 ## Risk engine
 
-AgentGuard402 reuses the [Sentry402](https://sentry402.vercel.app) risk engine verbatim. As of rule pack 0.2.2-mvp the active rules are:
+AgentGuard402 reuses the [Sentry402](https://sentry402.vercel.app) risk engine verbatim. As of rule pack **0.3.0-mvp** the 16 active rules are:
 
 1. `ofac_direct_match` — destination on active OFAC SDN list
 2. `sanctions_adjacency` — destination's counterparty on SDN list (deep-sweep + ERC-20 transfer sweep)
-3. `stablecoin_dprk_cluster_proximity` — destination interacted with SB0416 DPRK USDT addresses
-4. `stablecoin_non_cooperative_issuer` — A7A5 / sanctions-evasion-vehicle stablecoin holdings
-5. `drainer_pattern` — ≥3 unlimited approvals to one spender
-6. `stablecoin_issuer_frozen_match` — Tether/Circle/Paxos public freeze list match
-7. `approval_value_at_risk` — active approvals exposing $1k+ USD
-8. `stablecoin_velocity_typology` — DPRK IT-worker funnel pattern
-9. `unlimited_approval` — outstanding uint256-max approvals
-10. `high_velocity` — >50 tx in 24h
-11. `stablecoin_mica_emt_non_compliant` — MiCA EMT-unauthorized stablecoin holdings
-12. `fresh_wallet` — under 7 days old (true wallet age via getEarliestTransactionsForAddress)
-13. `tornado_cash_historic_exposure` — historic mixer counterparty (informational)
-14. `stablecoin_issuer_compliance` — informational stablecoin issuer profile
-15. `coverage_advisory` — Solana coverage limitation notice
+3. `sanctions_indirect_exposure` — **NEW** 2-hop materially-gated exposure via $1k+ flow counterparty
+4. `stablecoin_dprk_cluster_proximity` — destination interacted with SB0416 DPRK USDT addresses
+5. `stablecoin_non_cooperative_issuer` — A7A5 / sanctions-evasion-vehicle stablecoin holdings
+6. `drainer_pattern` — ≥3 unlimited approvals to one spender
+7. `stablecoin_issuer_frozen_match` — Tether/Circle/Paxos public freeze list match
+8. `approval_value_at_risk` — active approvals exposing $1k+ USD
+9. `stablecoin_velocity_typology` — DPRK IT-worker funnel pattern
+10. `stablecoin_mica_emt_non_compliant` — MiCA EMT-unauthorized stablecoin holdings
+11. `high_velocity` — >50 tx in 24h
+12. `unlimited_approval` — outstanding uint256-max approvals
+13. `fresh_wallet` — under 7 days old (true wallet age via getEarliestTransactionsForAddress)
+14. `tornado_cash_historic_exposure` — historic mixer counterparty (informational)
+15. `stablecoin_issuer_compliance` — informational stablecoin issuer profile
+16. `coverage_advisory` — Solana coverage limitation notice
 
 Every signal is citation-bound to specific GoldRush API calls and pinned dataset versions. See [lib/rule-pack.ts](./lib/rule-pack.ts) for weights and thresholds.
+
+## Coverage matrix
+
+`scripts/test-coverage.mjs` runs every entry in our SDN seed list plus a curated set of clean wallets (CEX hot wallets, vitalik.eth, protocol routers, token contracts) through the engine and writes a markdown report to [`TESTING.md`](./TESTING.md).
+
+Cohorts:
+
+- **Active OFAC SDN** — DPRK SB0416 (2026-03-12) + FATF-attributed Lazarus (ByBit 2025-02, Ronin Bridge 2022-04). Expected verdict: `block`.
+- **Tornado Cash historic** — original 2022-08-08 OFAC EO 13694 designation, delisted 2025-03-21 per Texas Federal Court permanent injunction. Expected verdict: `allow` with `tornado_cash_historic_exposure` signal (informational).
+- **Clean wallets** — high-profile named addresses; any non-`allow` verdict is recorded as a false positive.
+
+Run it:
+
+```bash
+npm run test:coverage              # against production
+npm run test:coverage:local        # against http://localhost:3001
+SENTRY_MODE=1 AGENTGUARD_URL=https://sentry402.vercel.app npm run test:coverage
+```
+
+The script exits non-zero if any active SDN address was missed or any clean wallet false-positived — suitable for CI gating.
 
 ## Pricing
 

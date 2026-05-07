@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "demo": "node agent/agentguard-cli.mjs",
     "demo:block": "node agent/agentguard-cli.mjs 0xcB74874f1e06Fcf80A306e06e5379A44B488bA2D",
-    "demo:allow": "node agent/agentguard-cli.mjs 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    "demo:allow": "node agent/agentguard-cli.mjs 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+    "test:coverage": "node scripts/test-coverage.mjs",
+    "test:coverage:local": "AGENTGUARD_URL=http://localhost:3001 node scripts/test-coverage.mjs"
   },
   "dependencies": {
     "@covalenthq/client-sdk": "^2.3.8",
