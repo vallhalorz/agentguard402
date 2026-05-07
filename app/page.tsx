@@ -208,6 +208,9 @@ function TestMatrix() {
       <CohortBlock
         title="Active OFAC SDN — should BLOCK"
         kicker="Cohort 1 / 3 · DPRK SB0416 + Lazarus"
+        badge="12 / 12 caught"
+        badgeTone="block"
+        defaultOpen
       >
         <ResultRow
           label="Amnokgang Technology Dev. Co. (DPRK)"
@@ -244,6 +247,8 @@ function TestMatrix() {
       <CohortBlock
         title="Tornado Cash historic — should DETECT, not block"
         kicker="Cohort 2 / 3 · delisted 2025-03-21"
+        badge="7 / 7 detected"
+        badgeTone="warn"
       >
         <ResultRow
           label="Tornado Cash Router (historic)"
@@ -268,6 +273,8 @@ function TestMatrix() {
       <CohortBlock
         title="Clean wallets — should ALLOW"
         kicker="Cohort 3 / 3 · no false positives"
+        badge="9 / 9 clean"
+        badgeTone="allow"
       >
         <ResultRow
           label="vitalik.eth"
@@ -331,33 +338,63 @@ function TestMatrix() {
 }
 
 function CohortBlock({
-  title, kicker, children,
+  title, kicker, children, badge, badgeTone, defaultOpen,
 }: {
   title: string;
   kicker: string;
   children: React.ReactNode;
+  badge?: string;
+  badgeTone?: "block" | "warn" | "allow";
+  defaultOpen?: boolean;
 }) {
+  const badgeClass =
+    badgeTone === "block"
+      ? "border-accent text-accent"
+      : badgeTone === "warn"
+        ? "border-verdict-warn text-verdict-warn"
+        : "border-verdict-allow text-verdict-allow";
   return (
-    <div className="space-y-3">
-      <div>
-        <p className="kicker mb-1">{kicker}</p>
-        <h3 className="editorial-headline text-2xl">{title}</h3>
+    <details
+      open={defaultOpen}
+      className="group border border-ink-300 bg-paper-100 [&_summary::-webkit-details-marker]:hidden"
+    >
+      <summary className="flex items-center gap-4 px-5 py-4 cursor-pointer list-none hover:bg-paper-200 transition-colors">
+        {/* Chevron — rotates when open */}
+        <svg
+          className="h-3.5 w-3.5 text-ink-500 transition-transform duration-200 group-open:rotate-90 shrink-0"
+          viewBox="0 0 12 12"
+          fill="none"
+          aria-hidden
+        >
+          <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <div className="flex-1 min-w-0">
+          <p className="kicker mb-0.5">{kicker}</p>
+          <h3 className="editorial-headline text-xl sm:text-2xl leading-tight">{title}</h3>
+        </div>
+        {badge && (
+          <span className={`mono text-[11px] uppercase tracking-widest font-semibold border px-2.5 py-1 ${badgeClass} bg-paper-50 shrink-0 hidden sm:inline-block`}>
+            {badge}
+          </span>
+        )}
+      </summary>
+      <div className="px-5 pb-5 pt-1 border-t border-paper-300">
+        <table className="result-table">
+          <thead>
+            <tr>
+              <th>Address · label</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Score</th>
+              <th>Top signal</th>
+              <th>p50</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>{children}</tbody>
+        </table>
       </div>
-      <table className="result-table">
-        <thead>
-          <tr>
-            <th>Address · label</th>
-            <th>Expected</th>
-            <th>Actual</th>
-            <th>Score</th>
-            <th>Top signal</th>
-            <th>p50</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
-    </div>
+    </details>
   );
 }
 
