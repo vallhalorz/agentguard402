@@ -1,0 +1,32 @@
+{
+  "name": "agentguard402",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An x402 firewall for AI agents. Two cents per pre-flight check between your agent and a sanctioned wallet. Built on the Sentry402 risk engine.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "demo": "node agent/agentguard-cli.mjs",
+    "demo:block": "node agent/agentguard-cli.mjs 0xcB74874f1e06Fcf80A306e06e5379A44B488bA2D",
+    "demo:allow": "node agent/agentguard-cli.mjs 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+  },
+  "dependencies": {
+    "@covalenthq/client-sdk": "^2.3.8",
+    "next": "^15.5.16",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
+  }
+}
