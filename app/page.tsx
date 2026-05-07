@@ -90,6 +90,108 @@ export default function Home() {
       />
       <ApiSection origin={origin} />
       <EngineInventory />
+      <PricingStrip />
+    </div>
+  );
+}
+
+/* ============================================================
+ * Pricing strip — compact 4-card row at the bottom
+ * ============================================================ */
+function PricingStrip() {
+  return (
+    <section className="space-y-5">
+      <div className="rule-thick" />
+      <div>
+        <p className="kicker mb-2">Pricing</p>
+        <h2 className="editorial-headline text-2xl sm:text-3xl mb-3">
+          Two cents per call.
+        </h2>
+      </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <PriceCard
+          tier="Free preview"
+          price="$0"
+          priceTone="allow"
+          includes="All 16 rules. Identical to paid response."
+          bestFor="Evaluation, dev, landing page."
+        />
+        <PriceCard
+          tier="Pre-flight"
+          price="$0.02"
+          priceUnit="/ call"
+          priceTone="block"
+          includes="x402-gated. 1-hop sweep + 2-hop material."
+          bestFor="Production agent endpoint."
+          highlight
+        />
+        <PriceCard
+          tier="Audit dossier"
+          tierLink={{ href: "https://sentry402.vercel.app", label: "↗ Sentry402" }}
+          price="$0.05"
+          priceUnit="/ dossier"
+          priceTone="ink"
+          includes="Full RiskDossier + holdings + counterparty graph + JSON/PDF."
+          bestFor="Compliance officers, SAR exhibits."
+        />
+        <PriceCard
+          tier="Enterprise"
+          price="contract"
+          priceTone="ink"
+          includes="SLA, custom rule pack, SOC2 logs, dedicated capacity."
+          bestFor="VASPs, regulated agent platforms."
+        />
+      </div>
+    </section>
+  );
+}
+
+function PriceCard({
+  tier, tierLink, price, priceUnit, priceTone, includes, bestFor, highlight,
+}: {
+  tier: string;
+  tierLink?: { href: string; label: string };
+  price: string;
+  priceUnit?: string;
+  priceTone: "allow" | "block" | "ink";
+  includes: string;
+  bestFor: string;
+  highlight?: boolean;
+}) {
+  const priceClass =
+    priceTone === "allow"
+      ? "text-verdict-allow"
+      : priceTone === "block"
+        ? "text-accent"
+        : "text-ink-900";
+  const cardClass = highlight
+    ? "bg-paper-100 border-2 border-ink-900"
+    : "bg-paper-50 border border-ink-300";
+  return (
+    <div className={`${cardClass} p-4 flex flex-col`}>
+      <p className="kicker mb-1.5 text-ink-500">{tier}</p>
+      <div className="flex items-baseline gap-1.5 mb-3">
+        <span className={`editorial-headline text-3xl ${priceClass}`}>
+          {price}
+        </span>
+        {priceUnit && (
+          <span className="mono text-[11px] text-ink-500">{priceUnit}</span>
+        )}
+      </div>
+      <p className="text-[12px] text-ink-700 leading-relaxed mb-2 flex-1">
+        {includes}
+      </p>
+      <p className="text-[11px] text-ink-500 italic leading-snug">{bestFor}</p>
+      {tierLink && (
+        <a
+          href={tierLink.href}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 inline-block text-[11px] mono text-ink-500 border-b border-ink-300 hover:border-accent self-start"
+        >
+          {tierLink.label}
+        </a>
+      )}
     </div>
   );
 }
@@ -652,56 +754,6 @@ X-PAYMENT: <signed x402 USDC payload>
               <td className="mono text-[11px] uppercase text-verdict-allow">active</td>
               <td className="mono text-[11px]">on-chain</td>
               <td className="text-[13px] text-ink-700">Public freeze events sweep at counterparty layer.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pricing tiers */}
-      <div>
-        <p className="kicker mb-2">Pricing</p>
-        <table className="result-table">
-          <thead>
-            <tr>
-              <th>Tier</th>
-              <th>Price</th>
-              <th>Includes</th>
-              <th>Best for</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="text-[13px] font-medium">Free preview</td>
-              <td className="mono text-[12px] text-verdict-allow">$0</td>
-              <td className="text-[13px] text-ink-700">All 16 rules. Identical to paid response.</td>
-              <td className="text-[13px] text-ink-700">Evaluation, landing page, dev.</td>
-            </tr>
-            <tr>
-              <td className="text-[13px] font-medium">Pre-flight</td>
-              <td className="mono text-[12px] text-accent">$0.02 / call</td>
-              <td className="text-[13px] text-ink-700">x402-gated. 1-hop sweep + 2-hop material.</td>
-              <td className="text-[13px] text-ink-700">Production agent endpoint.</td>
-            </tr>
-            <tr>
-              <td className="text-[13px] font-medium">
-                Audit dossier{" "}
-                <a
-                  href="https://sentry402.vercel.app"
-                  target="_blank" rel="noreferrer"
-                  className="text-ink-500 border-b border-ink-300 hover:border-accent ml-1"
-                >
-                  ↗ Sentry402
-                </a>
-              </td>
-              <td className="mono text-[12px] text-ink-700">$0.05 / dossier</td>
-              <td className="text-[13px] text-ink-700">Full RiskDossier + holdings + counterparty graph + JSON/PDF.</td>
-              <td className="text-[13px] text-ink-700">Compliance officers, SAR exhibits.</td>
-            </tr>
-            <tr>
-              <td className="text-[13px] font-medium">Enterprise</td>
-              <td className="mono text-[12px] text-ink-700">contract</td>
-              <td className="text-[13px] text-ink-700">SLA, custom rule pack, SOC2 logs, dedicated capacity.</td>
-              <td className="text-[13px] text-ink-700">VASPs, regulated agent platforms.</td>
             </tr>
           </tbody>
         </table>
