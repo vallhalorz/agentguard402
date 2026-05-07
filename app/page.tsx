@@ -78,7 +78,6 @@ export default function Home() {
     <div className="space-y-20">
       <Hero />
       <TestMatrix />
-      <ApiSection origin={origin} />
       <Playground
         chain={chain}
         setChain={setChain}
@@ -89,6 +88,7 @@ export default function Home() {
         result={result}
         check={check}
       />
+      <ApiSection origin={origin} />
       <EngineInventory />
     </div>
   );
@@ -117,20 +117,40 @@ function Hero() {
           <span className="mono text-ink-950">warn</span>, or{" "}
           <span className="mono text-accent">block</span>, citation-bound, two cents.
         </p>
+
+        {/* Scope box — what it is / what it isn't */}
+        <div className="grid sm:grid-cols-2 gap-4 mb-6 max-w-prose">
+          <div className="border border-ink-300 bg-paper-100 p-4">
+            <p className="kicker mb-2 text-verdict-allow">What it does</p>
+            <ul className="text-[13px] text-ink-800 space-y-1 leading-snug">
+              <li>· Pre-flight sanctions verdict</li>
+              <li>· 16 cited rules · 1-hop sweep</li>
+              <li>· 2-hop materially-gated exposure</li>
+              <li>· Citation-bound reasoning artifact</li>
+              <li>· Free preview at <code className="mono text-[12px]">/api/screen</code></li>
+            </ul>
+          </div>
+          <div className="border border-ink-300 bg-paper-100 p-4">
+            <p className="kicker mb-2 text-accent">What it doesn&apos;t</p>
+            <ul className="text-[13px] text-ink-800 space-y-1 leading-snug">
+              <li>· File SARs (regulator submission is on you)</li>
+              <li>· Freeze funds (we have no custody)</li>
+              <li>· Provide legal advice</li>
+              <li>· Replace a full KYT vendor</li>
+              <li>· Audit-grade dossiers (
+                <a href="https://sentry402.vercel.app" target="_blank" rel="noreferrer" className="border-b border-ink-300 hover:border-accent">
+                  Sentry402
+                </a>
+                )
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[13px] text-ink-600">
           <span>Rule pack 0.3.0 · 16 cited rules</span>
           <span aria-hidden>·</span>
-          <span>
-            <a
-              href="https://sentry402.vercel.app"
-              target="_blank"
-              rel="noreferrer"
-              className="border-b border-ink-300 hover:border-accent text-ink-900"
-            >
-              Sentry402
-            </a>{" "}
-            for the audit-grade dossier
-          </span>
+          <span>Settled on Base Sepolia</span>
         </div>
       </div>
       <aside className="lg:mt-8">
@@ -172,15 +192,16 @@ function TestMatrix() {
     <section id="evidence" className="space-y-6">
       <div className="rule-thick" />
       <div>
-        <p className="kicker mb-2">Coverage matrix · 28 known addresses</p>
+        <p className="kicker mb-2">Coverage matrix · 13 representative · 28 in TESTING.md</p>
         <h2 className="editorial-headline text-3xl sm:text-4xl mb-3 max-w-prose">
           We tested it. <span className="font-serif italic">Here is what caught.</span>
         </h2>
         <p className="text-ink-700 max-w-prose leading-relaxed">
-          12/12 active SDN blocked, 7/7 historic mixers detected (informational),
-          0/9 false positives. Run{" "}
+          Across all 28: <strong>12/12</strong> active SDN blocked,{" "}
+          <strong>7/7</strong> historic mixers detected (informational),{" "}
+          <strong>0/9</strong> false positives. Run{" "}
           <code className="mono text-[13px]">npm run test:coverage</code>{" "}
-          to refresh.
+          to refresh; 13 representative rows shown below.
         </p>
       </div>
 
@@ -291,6 +312,20 @@ function TestMatrix() {
           TESTING.md
         </a>.
       </p>
+
+      {/* Why not just the CDP Facilitator? — competitive frame */}
+      <div className="border-l-[6px] border-l-ink-900 bg-paper-100 px-5 py-4 max-w-prose">
+        <p className="kicker mb-1.5">Why not just the CDP Facilitator?</p>
+        <p className="text-[14px] text-ink-800 leading-relaxed">
+          Coinbase&apos;s CDP Facilitator blocks active OFAC SDN at the rails layer,
+          for free. AgentGuard402 sits one layer up: multi-jurisdiction list coverage
+          (FATF + OpenSanctions roadmap + issuer freeze events), 2-hop materially-gated
+          counterparty exposure, and a citation-bound reasoning artifact a compliance
+          officer can attach to a SAR exhibit. We catch the wallet that{" "}
+          <em>funded</em> the SDN address — not just the SDN address itself. We do not
+          replace the facilitator; we sit beside it.
+        </p>
+      </div>
     </section>
   );
 }
@@ -657,6 +692,62 @@ X-PAYMENT: <signed x402 USDC payload>
   return agent.transfer(to, usd);
 }`}</pre>
         </div>
+      </div>
+
+      {/* Verdict spec — what to do with each verdict */}
+      <div>
+        <p className="kicker mb-2">Verdict spec · agent action per severity</p>
+        <table className="result-table">
+          <thead>
+            <tr>
+              <th>Severity</th>
+              <th>Verdict</th>
+              <th>Recommended agent action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="mono text-[12px] uppercase text-accent font-semibold">critical</td>
+              <td className="mono text-[12px] text-accent font-semibold">block</td>
+              <td className="text-[13px]">
+                Abort transfer. Do not retry. Log <code className="mono text-[12px]">generation_id</code> and
+                route to SAR queue if your firm is a regulated VASP.
+              </td>
+            </tr>
+            <tr>
+              <td className="mono text-[12px] uppercase text-accent">high</td>
+              <td className="mono text-[12px] text-accent font-semibold">block</td>
+              <td className="text-[13px]">Abort transfer. Optional: retry only after explicit human override.</td>
+            </tr>
+            <tr>
+              <td className="mono text-[12px] uppercase text-verdict-warn">medium</td>
+              <td className="mono text-[12px] text-verdict-warn">warn</td>
+              <td className="text-[13px]">
+                Queue for human approval. Attach the full dossier and signals to the
+                approval payload — the reviewer needs the citation chain.
+              </td>
+            </tr>
+            <tr>
+              <td className="mono text-[12px] uppercase text-ink-500">low</td>
+              <td className="mono text-[12px] text-verdict-allow">allow</td>
+              <td className="text-[13px]">
+                Proceed under normal policy. Persist <code className="mono text-[12px]">generation_id</code> for
+                audit retrieval (FCA 2024 §3.4 reproducibility).
+              </td>
+            </tr>
+            <tr>
+              <td className="mono text-[12px] uppercase text-ink-500">info</td>
+              <td className="mono text-[12px] text-verdict-allow">allow</td>
+              <td className="text-[13px]">Proceed.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="text-[12px] text-ink-500 italic mt-2 max-w-prose">
+          Bias toward <span className="mono">warn</span> is intentional. FATF&apos;s
+          risk-based approach and FinCEN April 2026 NPRM both prefer enhanced review
+          over hard blocks at the medium tier — false positives have a real cost in
+          agent-platform churn.
+        </p>
       </div>
     </section>
   );

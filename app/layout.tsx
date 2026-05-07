@@ -44,11 +44,11 @@ export default function RootLayout({
               <a href="#evidence" className="hover:text-accent transition-colors">
                 Evidence
               </a>
-              <a href="#api" className="hover:text-accent transition-colors">
-                API
-              </a>
               <a href="#try" className="hover:text-accent transition-colors">
                 Try
+              </a>
+              <a href="#api" className="hover:text-accent transition-colors">
+                API
               </a>
               <a
                 href="https://github.com/vallhalorz/agentguard402"
