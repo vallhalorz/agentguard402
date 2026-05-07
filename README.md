@@ -55,7 +55,7 @@ The endpoint returns:
   "evidence": { "ev_...": { "endpoint": "...", "tx_hashes": [...] } },
   "latency_ms": 1240,
   "metadata": {
-    "rule_pack_version": "0.2.2-mvp",
+    "rule_pack_version": "0.3.0-mvp",
     "sdn_list_version": "2026-05-07-dprk-mar2026",
     "stablecoin_registry_version": "2026-05-07-seed",
     "generation_id": "gen_..."
@@ -193,4 +193,4 @@ In active development for the May 2026 GoldRush hackathon. Submission deadline 2
 
 ## License
 
-MIT (planned).
+MIT — see [LICENSE](./LICENSE).
