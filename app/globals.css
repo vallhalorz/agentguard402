@@ -2,17 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Editorial typography stack — Newsreader serif headers, Inter body,
- * JetBrains Mono for hashes/addresses/code. Loaded inline so we don't pay
- * a CDN round-trip on first paint. */
 @import url("https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 :root {
-  color-scheme: light;
-  --paper: #faf7f0;
-  --ink: #0d0d0d;
-  --hairline: #d6cbb0;
-  --accent: #a8211b;
+  color-scheme: dark;
+  --paper:   #0a0908;
+  --paper-2: #13110f;
+  --ink:     #faf7f0;
+  --ink-mid: #b8aa8c;
+  --hairline:#3a352e;
+  --accent:  #dc4a44;
 }
 
 html,
@@ -25,21 +24,27 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Body text rhythm */
+/* Subtle background aura — altitude.xyz-style depth without aggressive gradients */
 body {
+  background:
+    radial-gradient(ellipse 70% 45% at 70% -10%, rgba(220, 74, 68, 0.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 0% 110%, rgba(184, 170, 140, 0.04), transparent 65%),
+    var(--paper);
+  background-attachment: fixed;
   line-height: 1.55;
 }
 
-/* Headlines lean serif. The class .editorial-headline is for page-level h1 and h2. */
+/* Editorial serif headlines */
 .editorial-headline {
   font-family: "Newsreader", Charter, Georgia, "Times New Roman", serif;
   font-weight: 500;
   font-feature-settings: "lnum", "ss01";
   letter-spacing: -0.02em;
   line-height: 1.05;
+  color: var(--ink);
 }
 
-/* Drop cap for the lead paragraph — opt-in. */
+/* Drop cap for lede paragraph */
 .lede::first-letter {
   font-family: "Newsreader", Charter, serif;
   font-weight: 600;
@@ -50,22 +55,24 @@ body {
   color: var(--ink);
 }
 
-/* Mono utility — used for addresses, JSON, metadata */
+/* Mono utility */
 .mono {
   font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.005em;
 }
 
-/* Dotted hairline used to divide sections — masthead style */
-.rule-thin {
-  border-top: 1px solid var(--hairline);
-}
+/* Hairline section dividers */
+.rule-thin  { border-top: 1px solid var(--hairline); }
 .rule-thick {
-  border-top: 3px double var(--ink);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  height: 4px;
+  border-radius: 0;
+  margin: 0;
 }
 
-/* Section labels (small caps, kicker) */
+/* Section labels (small caps, kicker) — accent red still pops on dark */
 .kicker {
   font-family: "Inter", sans-serif;
   font-size: 11px;
@@ -75,7 +82,7 @@ body {
   color: var(--accent);
 }
 
-/* Pull quote — used in the lede and the manifesto block */
+/* Pull quote */
 .pull-quote {
   font-family: "Newsreader", Charter, serif;
   font-weight: 400;
@@ -85,31 +92,22 @@ body {
   font-style: italic;
 }
 
-/* The terminal block style — used for code samples and CLI output mocks */
+/* Terminal blocks — slightly differentiated from page bg via a deeper black */
 .terminal {
-  background: #1a1a1a;
-  color: #f3eee2;
+  background: #050403;
+  color: #e8dfc9;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   border-radius: 6px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid rgba(255, 247, 240, 0.10);
+  box-shadow: inset 0 0 60px rgba(220, 74, 68, 0.04);
 }
-.terminal .prompt {
-  color: #a8211b;
-}
-.terminal .ok {
-  color: #82a982;
-}
-.terminal .warn {
-  color: #d4a017;
-}
-.terminal .bad {
-  color: #d96a64;
-}
-.terminal .dim {
-  color: #777777;
-}
+.terminal .prompt { color: #dc4a44; }
+.terminal .ok     { color: #a8c8a3; }
+.terminal .warn   { color: #d4a017; }
+.terminal .bad    { color: #ef5a52; }
+.terminal .dim    { color: #5a5249; }
 
-/* Result table — newspaper style, alternating rows are subtle */
+/* Result table — newspaper style on dark */
 .result-table {
   border-collapse: collapse;
   width: 100%;
@@ -130,9 +128,25 @@ body {
   padding: 10px 10px;
   border-bottom: 1px solid var(--hairline);
   vertical-align: top;
+  color: var(--ink-mid);
 }
 .result-table tr:hover td {
-  background: rgba(13, 13, 13, 0.025);
+  background: rgba(250, 247, 240, 0.025);
+}
+
+/* Glassmorphism utility — for cards floating over the body aura */
+.glass {
+  background: rgba(19, 17, 15, 0.65);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  border: 1px solid rgba(255, 247, 240, 0.08);
+}
+
+/* Block-state glow — subtle red halo on critical verdicts */
+.block-glow {
+  box-shadow:
+    0 0 0 1px rgba(220, 74, 68, 0.30),
+    0 0 32px rgba(220, 74, 68, 0.20);
 }
 
 :focus-visible {
@@ -141,23 +155,14 @@ body {
   border-radius: 2px;
 }
 
-/* Animations restricted to the verdict transition only — no decorative motion */
+/* Animations restricted to the verdict transition only */
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.fade-up {
-  animation: fade-up 240ms ease-out;
-}
+.fade-up { animation: fade-up 240ms ease-out; }
 
 @media print {
-  .no-print {
-    display: none !important;
-  }
+  .no-print { display: none !important; }
+  body { background: white; color: black; }
 }

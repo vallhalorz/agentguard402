@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-paper-50 text-ink-900">
         {/* Masthead — newspaper-style, full bleed, no logo gradients */}
-        <header className="border-b-2 border-ink-900 bg-paper-50 sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-paper-50/90">
+        <header className="border-b border-ink-300 bg-paper-50/85 sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-paper-50/70">
           <div className="mx-auto max-w-column px-6 py-3 flex items-baseline justify-between gap-6">
             <a href="/" className="group flex items-baseline gap-3">
               <span className="editorial-headline text-xl tracking-tighter">
@@ -84,7 +84,7 @@ export default function RootLayout({
 
         <footer className="mx-auto max-w-column px-6 mt-24">
           {/* Top: brandmark + nav */}
-          <div className="border-t-2 border-ink-900 pt-8 pb-6 flex items-baseline justify-between gap-6 flex-wrap">
+          <div className="border-t border-ink-300 pt-8 pb-6 flex items-baseline justify-between gap-6 flex-wrap">
             <div className="flex items-baseline gap-3">
               <span className="editorial-headline text-2xl tracking-tighter">
                 AgentGuard<span className="text-accent">402</span>

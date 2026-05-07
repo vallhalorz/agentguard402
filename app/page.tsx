@@ -165,8 +165,8 @@ function PriceCard({
         ? "text-accent"
         : "text-ink-900";
   const cardClass = highlight
-    ? "bg-paper-100 border-2 border-ink-900"
-    : "bg-paper-50 border border-ink-300";
+    ? "bg-paper-100 border-2 border-accent shadow-glow"
+    : "bg-paper-100 border border-ink-300 glass";
   return (
     <div className={`${cardClass} p-4 flex flex-col`}>
       <p className="kicker mb-1.5 text-ink-500">{tier}</p>
@@ -256,7 +256,7 @@ function Hero() {
         </div>
       </div>
       <aside className="lg:mt-8">
-        <div className="bg-paper-100 border border-ink-300 p-5 shadow-card">
+        <div className="glass p-5 shadow-card">
           <p className="kicker mb-3">Sample response · POST /api/preflight</p>
           <pre className="mono text-[12px] leading-relaxed text-ink-900 overflow-x-auto whitespace-pre-wrap break-all">{`{
   "verdict": `}
@@ -898,7 +898,7 @@ function Playground({
             <button
               type="submit"
               disabled={loading || !toAddress}
-              className="bg-ink-950 text-paper-50 px-5 py-2.5 font-semibold tracking-wider text-[12px] uppercase hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="bg-accent text-ink-950 px-5 py-2.5 font-semibold tracking-wider text-[12px] uppercase hover:bg-accent-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? "Checking…" : "Pre-flight"}
             </button>
@@ -970,7 +970,7 @@ function VerdictView({ r }: { r: PreflightResponse }) {
         : "border-l-verdict-allow text-verdict-allow";
   return (
     <article className="space-y-4 fade-up">
-      <header className={`border-l-[6px] ${verdictTone} bg-paper-100 p-5 border-y border-r border-ink-300`}>
+      <header className={`border-l-[6px] ${verdictTone} bg-paper-100 p-5 border-y border-r border-ink-300 ${v === "block" ? "block-glow" : ""}`}>
         <p className="kicker mb-2">Pre-flight verdict</p>
         <p className={`editorial-headline text-5xl tracking-tightest mb-1 ${v === "block" ? "text-accent" : v === "warn" ? "text-verdict-warn" : "text-verdict-allow"}`}>
           {VERDICT_LABEL[v]}
