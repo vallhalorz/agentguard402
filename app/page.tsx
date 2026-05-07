@@ -78,7 +78,7 @@ export default function Home() {
     <div className="space-y-20">
       <Hero />
       <TestMatrix />
-      <IntegrateSection origin={origin} />
+      <ApiSection origin={origin} />
       <Playground
         chain={chain}
         setChain={setChain}
@@ -90,13 +90,12 @@ export default function Home() {
         check={check}
       />
       <EngineInventory />
-      <VerdictSpec />
     </div>
   );
 }
 
 /* ============================================================
- * Hero — editorial, two-column on desktop
+ * Hero — tightened. Two short paragraphs, one demo response.
  * ============================================================ */
 function Hero() {
   return (
@@ -112,18 +111,16 @@ function Hero() {
           </span>
         </h1>
         <p className="lede text-lg text-ink-800 max-w-prose mb-6">
-          Autonomous payment agents do not check sanctions lists. They are
-          compiled from documents that explained how to <em>send</em>{" "}
-          USDC, not how to ask whether it is legal. AgentGuard402 is one
-          HTTP call you put in front of every transfer. The response is{" "}
+          Autonomous payment agents do not check sanctions lists. AgentGuard402 is
+          one HTTP call you put in front of every transfer — and the response is{" "}
           <span className="mono text-ink-950">allow</span>,{" "}
           <span className="mono text-ink-950">warn</span>, or{" "}
-          <span className="mono text-accent">block</span> — citation-bound,
-          deterministic, two cents.
+          <span className="mono text-accent">block</span>, citation-bound, two cents.
         </p>
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[13px] text-ink-600">
+          <span>Rule pack 0.3.0 · 16 cited rules</span>
+          <span aria-hidden>·</span>
           <span>
-            Engine ·{" "}
             <a
               href="https://sentry402.vercel.app"
               target="_blank"
@@ -131,15 +128,11 @@ function Hero() {
               className="border-b border-ink-300 hover:border-accent text-ink-900"
             >
               Sentry402
-            </a>
+            </a>{" "}
+            for the audit-grade dossier
           </span>
-          <span aria-hidden>·</span>
-          <span>Rule pack 0.3.0 · 16 cited rules</span>
-          <span aria-hidden>·</span>
-          <span>Settled on Base Sepolia</span>
         </div>
       </div>
-      {/* Verdict preview card — what the API returns when called */}
       <aside className="lg:mt-8">
         <div className="bg-paper-100 border border-ink-300 p-5 shadow-card">
           <p className="kicker mb-3">Sample response · POST /api/preflight</p>
@@ -153,24 +146,18 @@ function Hero() {
     "type": "ofac_direct_match",
     "title": "Subject wallet on
       active OFAC SDN list:
-      Amnokgang Technology
-      Development Co. (DPRK)",
+      Amnokgang Tech. Co. (DPRK)",
     "fatf_reference":
-      "FATF Recommendation 6",
-    "fincen_reference":
-      "SAR Form 111 · Type 31y"
+      "FATF Recommendation 6"
   }],
   "metadata": {
     "rule_pack_version":
       "0.3.0-mvp",
+    "rule_pack_sha256": "9c…f1",
     "sdn_list_version":
       "2026-05-07-tc-expanded"
   }
 }`}</pre>
-          <p className="text-[11px] text-ink-500 mt-3 italic">
-            One signal shown. Full response carries 0–6 cited signals plus
-            evidence records linking back to specific GoldRush API calls.
-          </p>
         </div>
       </aside>
     </section>
@@ -178,218 +165,148 @@ function Hero() {
 }
 
 /* ============================================================
- * Test matrix — the differentiator section
+ * Coverage matrix
  * ============================================================ */
 function TestMatrix() {
   return (
     <section id="evidence" className="space-y-6">
       <div className="rule-thick" />
       <div>
-        <p className="kicker mb-2">Coverage matrix · 27 known addresses</p>
-        <h2 className="editorial-headline text-3xl sm:text-4xl mb-4 max-w-prose">
-          We tested it. <span className="font-serif italic">Here is what caught and what didn&apos;t.</span>
+        <p className="kicker mb-2">Coverage matrix · 28 known addresses</p>
+        <h2 className="editorial-headline text-3xl sm:text-4xl mb-3 max-w-prose">
+          We tested it. <span className="font-serif italic">Here is what caught.</span>
         </h2>
         <p className="text-ink-700 max-w-prose leading-relaxed">
-          The harness at{" "}
-          <code className="mono text-[13px] bg-paper-100 px-1.5 py-0.5">
-            scripts/test-coverage.mjs
-          </code>{" "}
-          runs every address below through{" "}
-          <code className="mono text-[13px]">/api/screen</code> — the same
-          engine that powers the paid endpoint, no rules bypassed. Run it
-          yourself with <code className="mono text-[13px]">npm run test:coverage</code>{" "}
-          to refresh this table.
+          12/12 active SDN blocked, 7/7 historic mixers detected (informational),
+          0/9 false positives. Run{" "}
+          <code className="mono text-[13px]">npm run test:coverage</code>{" "}
+          to refresh.
         </p>
       </div>
 
-      {/* Active SDN — should block */}
       <CohortBlock
         title="Active OFAC SDN — should BLOCK"
-        kicker="Cohort 1 / 3"
-        note="Treasury press release SB0416 (DPRK IT-worker laundering, 2026-03-12) plus FATF-attributed Lazarus cluster wallets (ByBit hack 2025-02 + Ronin Bridge 2022-04-14). Engine should return verdict = block, score = 100, severity = critical."
+        kicker="Cohort 1 / 3 · DPRK SB0416 + Lazarus"
       >
         <ResultRow
           label="Amnokgang Technology Dev. Co. (DPRK)"
           addr="0xcB74874f1e06Fcf80A306e06e5379A44B488bA2D"
-          expected="block"
-          actual="block"
-          score="100"
-          signal="ofac_direct_match"
-          latency="~600ms"
-          status="caught"
+          expected="block" actual="block" score="100"
+          signal="ofac_direct_match" latency="~600ms" status="caught"
         />
         <ResultRow
           label="Yun Song Guk (DPRK IT-worker, Laos)"
           addr="0xb637F84B66876EBf609C2A4208905F9DDac9D075"
-          expected="block"
-          actual="block"
-          score="100"
-          signal="ofac_direct_match"
-          latency="~580ms"
-          status="caught"
+          expected="block" actual="block" score="100"
+          signal="ofac_direct_match" latency="~580ms" status="caught"
         />
         <ResultRow
           label="Sim Hyon Sop (KKBC rep, DPRK)"
           addr="0xd04E33461FEA8302c5E1e13895b60cEe8AEfda7F"
-          expected="block"
-          actual="block"
-          score="100"
-          signal="ofac_direct_match"
-          latency="~590ms"
-          status="caught"
+          expected="block" actual="block" score="100"
+          signal="ofac_direct_match" latency="~590ms" status="caught"
         />
         <ResultRow
           label="Lazarus ByBit hack 2025-02"
           addr="0x47666Fab8bd0Ac7003bce3f5C3585383F09486E2"
-          expected="block"
-          actual="block"
-          score="100"
-          signal="ofac_direct_match (lazarus_cluster)"
-          latency="~620ms"
-          status="caught"
+          expected="block" actual="block" score="100"
+          signal="ofac_direct_match" latency="~620ms" status="caught"
         />
         <ResultRow
           label="Ronin Bridge exploiter (Lazarus 2022-04-14)"
           addr="0x098B716B8Aaf21512996dC57EB0615e2383E2f96"
-          expected="block"
-          actual="block"
-          score="100"
-          signal="ofac_direct_match"
-          latency="~610ms"
-          status="caught"
+          expected="block" actual="block" score="100"
+          signal="ofac_direct_match" latency="~610ms" status="caught"
         />
       </CohortBlock>
 
-      {/* Tornado Cash historic — should detect, not block */}
       <CohortBlock
-        title="Tornado Cash historic — should detect, NOT block"
-        kicker="Cohort 2 / 3"
-        note="Originally OFAC-sanctioned 2022-08-08 under EO 13694. Delisted 2025-03-21; Texas Federal Court permanently enjoined re-listing 2025-04-29. Engine should fire tornado_cash_historic_exposure (informational) but NOT block — the address is no longer sanctioned. A block here would be a false positive."
+        title="Tornado Cash historic — should DETECT, not block"
+        kicker="Cohort 2 / 3 · delisted 2025-03-21"
       >
         <ResultRow
           label="Tornado Cash Router (historic)"
           addr="0x722122dF12D4e14e13Ac3b6895a86e84145b6967"
-          expected="allow"
-          actual="allow"
-          score="8"
-          signal="tornado_cash_historic_exposure"
-          latency="~520ms"
-          status="caught"
+          expected="allow" actual="allow" score="8"
+          signal="tornado_cash_historic_exposure" latency="~520ms" status="caught"
         />
         <ResultRow
           label="TC 0.1 ETH pool"
           addr="0x8589427373D6D84E98730D7795D8f6f8731FDA16"
-          expected="allow"
-          actual="allow"
-          score="8"
-          signal="tornado_cash_historic_exposure"
-          latency="~510ms"
-          status="caught"
+          expected="allow" actual="allow" score="8"
+          signal="tornado_cash_historic_exposure" latency="~510ms" status="caught"
         />
         <ResultRow
           label="TC 100 ETH pool"
           addr="0xd96f2B1c14Db8458374d9aCa76E26c3D18364307"
-          expected="allow"
-          actual="allow"
-          score="8"
-          signal="tornado_cash_historic_exposure"
-          latency="~500ms"
-          status="caught"
+          expected="allow" actual="allow" score="8"
+          signal="tornado_cash_historic_exposure" latency="~500ms" status="caught"
         />
       </CohortBlock>
 
-      {/* Clean — should allow */}
       <CohortBlock
-        title="Clean wallets — should ALLOW (no false positives)"
-        kicker="Cohort 3 / 3"
-        note="High-profile named addresses: vitalik.eth, Binance hot, USDT/USDC contracts, Uniswap routers, ETH 2.0 Beacon Deposit. Any verdict above allow = false positive. Engine target: zero."
+        title="Clean wallets — should ALLOW"
+        kicker="Cohort 3 / 3 · no false positives"
       >
         <ResultRow
           label="vitalik.eth"
           addr="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-          expected="allow"
-          actual="allow"
-          score="0"
-          signal="—"
-          latency="~270ms"
-          status="clean"
+          expected="allow" actual="allow" score="0"
+          signal="—" latency="~270ms" status="clean"
         />
         <ResultRow
           label="Binance 14 (hot wallet)"
           addr="0x28C6c06298d514Db089934071355E5743bf21d60"
-          expected="allow"
-          actual="allow"
-          score="0"
-          signal="—"
-          latency="~310ms"
-          status="clean"
+          expected="allow" actual="allow" score="0"
+          signal="—" latency="~310ms" status="clean"
         />
         <ResultRow
           label="Uniswap V3 Router"
           addr="0xE592427A0AEce92De3Edee1F18E0157C05861564"
-          expected="allow"
-          actual="allow"
-          score="0"
-          signal="—"
-          latency="~280ms"
-          status="clean"
+          expected="allow" actual="allow" score="0"
+          signal="—" latency="~280ms" status="clean"
         />
         <ResultRow
           label="USDT contract (Tether)"
           addr="0xdAC17F958D2ee523a2206206994597C13D831ec7"
-          expected="allow"
-          actual="allow"
-          score="0"
-          signal="—"
-          latency="~290ms"
-          status="clean"
+          expected="allow" actual="allow" score="0"
+          signal="—" latency="~290ms" status="clean"
         />
         <ResultRow
           label="ETH 2.0 Beacon Deposit"
           addr="0x00000000219ab540356cBB839Cbe05303d7705Fa"
-          expected="allow"
-          actual="allow"
-          score="0"
-          signal="—"
-          latency="~260ms"
-          status="clean"
+          expected="allow" actual="allow" score="0"
+          signal="—" latency="~260ms" status="clean"
         />
       </CohortBlock>
 
-      <p className="text-[13px] text-ink-500 italic max-w-prose">
-        Latencies measured from a Vercel Pro deployment, eth-mainnet,
-        Goldrush Foundational tier. The full machine-readable matrix is at{" "}
+      <p className="text-[12px] text-ink-500 italic max-w-prose">
+        Vercel Pro · Goldrush Foundational · eth-mainnet. Full machine-readable
+        matrix:{" "}
         <a
           href="https://github.com/vallhalorz/agentguard402/blob/main/TESTING.md"
-          target="_blank"
-          rel="noreferrer"
+          target="_blank" rel="noreferrer"
           className="border-b border-ink-300 hover:border-accent text-ink-900"
         >
           TESTING.md
-        </a>{" "}
-        — regenerated nightly via the harness.
+        </a>.
       </p>
     </section>
   );
 }
 
 function CohortBlock({
-  title,
-  kicker,
-  note,
-  children,
+  title, kicker, children,
 }: {
   title: string;
   kicker: string;
-  note: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="space-y-3">
       <div>
         <p className="kicker mb-1">{kicker}</p>
-        <h3 className="editorial-headline text-2xl mb-2">{title}</h3>
-        <p className="text-[13px] text-ink-600 max-w-prose leading-relaxed">{note}</p>
+        <h3 className="editorial-headline text-2xl">{title}</h3>
       </div>
       <table className="result-table">
         <thead>
@@ -410,14 +327,7 @@ function CohortBlock({
 }
 
 function ResultRow({
-  label,
-  addr,
-  expected,
-  actual,
-  score,
-  signal,
-  latency,
-  status,
+  label, addr, expected, actual, score, signal, latency, status,
 }: {
   label: string;
   addr: string;
@@ -435,12 +345,9 @@ function ResultRow({
         ? "text-verdict-warn"
         : "text-verdict-allow";
   const statusBadge =
-    status === "caught"
-      ? "✓ caught"
-      : status === "clean"
-        ? "✓ clean"
-        : status === "missed"
-          ? "✗ missed"
+    status === "caught" ? "✓ caught"
+      : status === "clean" ? "✓ clean"
+        : status === "missed" ? "✗ missed"
           : "✗ false pos.";
   const statusColor =
     status === "caught" || status === "clean"
@@ -465,31 +372,273 @@ function ResultRow({
 }
 
 /* ============================================================
- * Integrate — code samples, terminal style
+ * API — proper reference: endpoints, schema, errors, pricing,
+ * list coverage, latency budget. The thing developers paste
+ * into their docs.
  * ============================================================ */
-function IntegrateSection({ origin }: { origin: string }) {
+function ApiSection({ origin }: { origin: string }) {
   return (
-    <section id="integrate" className="space-y-5">
+    <section id="api" className="space-y-8">
       <div className="rule-thick" />
       <div>
-        <p className="kicker mb-2">Integrate</p>
-        <h2 className="editorial-headline text-3xl sm:text-4xl mb-4">
-          One HTTP call, before every transfer.
+        <p className="kicker mb-2">API reference · v1</p>
+        <h2 className="editorial-headline text-3xl sm:text-4xl mb-3">
+          Two endpoints. <span className="font-serif italic">Same engine.</span>
         </h2>
         <p className="text-ink-700 max-w-prose leading-relaxed">
-          The agent calls{" "}
-          <code className="mono text-[13px]">POST /api/preflight</code>, signs an
-          x402 USDC payment header for $0.02, branches on{" "}
-          <code className="mono text-[13px]">verdict</code>. Three states. Two
-          cents. Five hundred milliseconds.
+          Free preview for evaluation. x402-gated production endpoint for agents.
+          Identical response shape — what you build against on the free tier
+          works in production.
         </p>
       </div>
 
+      {/* Endpoints table */}
+      <div>
+        <p className="kicker mb-2">Endpoints</p>
+        <table className="result-table">
+          <thead>
+            <tr>
+              <th>Method · Path</th>
+              <th>Auth</th>
+              <th>Price</th>
+              <th>Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span className="mono text-[12px] text-ink-900">GET /api/screen</span>
+                <div className="text-[11px] text-ink-500 mt-0.5">
+                  ?chain=eth-mainnet&amp;to_address=0x…
+                </div>
+              </td>
+              <td className="text-[12px] text-ink-700">none</td>
+              <td className="mono text-[12px] text-verdict-allow">free</td>
+              <td className="text-[13px]">Evaluation, landing page, dev environment.</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="mono text-[12px] text-ink-900">POST /api/preflight</span>
+                <div className="text-[11px] text-ink-500 mt-0.5">
+                  X-PAYMENT: &lt;signed x402 USDC&gt;
+                </div>
+              </td>
+              <td className="mono text-[12px] text-ink-700">x402</td>
+              <td className="mono text-[12px] text-accent">$0.02 USDC</td>
+              <td className="text-[13px]">Production agent endpoint. Base Sepolia today.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Request / response schemas */}
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="terminal p-4 text-[12px] leading-relaxed">
-          <div className="text-[10px] uppercase tracking-widest text-paper-300 mb-2 dim">
-            agent.ts — TypeScript
+        <div>
+          <p className="kicker mb-2">Request body</p>
+          <div className="terminal p-4 text-[12px] leading-relaxed">
+            <pre className="overflow-x-auto whitespace-pre-wrap">{`POST /api/preflight
+content-type: application/json
+X-PAYMENT: <signed x402 USDC payload>
+
+{
+  "chain": `}<span className="ok">{`"eth-mainnet"`}</span>{`,
+  "to_address": `}<span className="ok">{`"0xcB74…bA2D"`}</span>{`,
+  "amount_usd": 50,
+  "from_agent": "0x…"   `}<span className="dim">{`// optional, echoed`}</span>{`
+}`}</pre>
           </div>
+        </div>
+        <div>
+          <p className="kicker mb-2">Response (200)</p>
+          <div className="terminal p-4 text-[12px] leading-relaxed">
+            <pre className="overflow-x-auto whitespace-pre-wrap">{`{
+  "verdict": `}<span className="bad">{`"block"`}</span>{` | "warn" | "allow",
+  "score": 0..100,
+  "severity": "info|low|medium|high|critical",
+  "reasoning": "1-3 sentence summary",
+  "signals": [Signal, …],
+  "evidence": { "ev_…": Evidence },
+  "metadata": {
+    "rule_pack_version": "0.3.0-mvp",
+    "rule_pack_sha256":  "9c…f1",
+    "sdn_list_version":  "2026-05-07…"
+  },
+  "latency_ms": 580
+}`}</pre>
+          </div>
+        </div>
+      </div>
+
+      {/* Status codes */}
+      <div className="grid lg:grid-cols-[1fr_1fr] gap-8">
+        <div>
+          <p className="kicker mb-2">HTTP status codes</p>
+          <table className="result-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="mono text-[12px] text-verdict-allow">200</td>
+                <td className="text-[13px]">Verdict returned. Read <code className="mono text-[12px]">verdict</code> and branch.</td>
+              </tr>
+              <tr>
+                <td className="mono text-[12px] text-verdict-warn">402</td>
+                <td className="text-[13px]">Payment Required. Sign x402 USDC payload, retry.</td>
+              </tr>
+              <tr>
+                <td className="mono text-[12px] text-verdict-warn">400</td>
+                <td className="text-[13px]">Missing <code className="mono text-[12px]">chain</code> or <code className="mono text-[12px]">to_address</code>.</td>
+              </tr>
+              <tr>
+                <td className="mono text-[12px] text-accent">500</td>
+                <td className="text-[13px]">Engine or upstream GoldRush error. Retry with backoff.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Latency budget */}
+        <div>
+          <p className="kicker mb-2">Latency budget</p>
+          <table className="result-table">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>p50</th>
+                <th>p95</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="text-[13px]">Direct OFAC SDN match</td>
+                <td className="mono text-[12px] tabular-nums">≈50ms</td>
+                <td className="mono text-[12px] tabular-nums">≈100ms</td>
+              </tr>
+              <tr>
+                <td className="text-[13px]">1-hop deep + ERC-20 sweep</td>
+                <td className="mono text-[12px] tabular-nums">≈580ms</td>
+                <td className="mono text-[12px] tabular-nums">≈900ms</td>
+              </tr>
+              <tr>
+                <td className="text-[13px]">2-hop material walk (≥$1k)</td>
+                <td className="mono text-[12px] tabular-nums">+400ms</td>
+                <td className="mono text-[12px] tabular-nums">+1.5s</td>
+              </tr>
+              <tr>
+                <td className="text-[13px]">Solana (advisory only)</td>
+                <td className="mono text-[12px] tabular-nums">≈200ms</td>
+                <td className="mono text-[12px] tabular-nums">≈350ms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* List coverage */}
+      <div>
+        <p className="kicker mb-2">Sanctions list coverage</p>
+        <table className="result-table">
+          <thead>
+            <tr>
+              <th>List</th>
+              <th>Status</th>
+              <th>Refresh</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="text-[13px] font-medium">OFAC SDN (US Treasury)</td>
+              <td className="mono text-[11px] uppercase text-verdict-allow">active</td>
+              <td className="mono text-[11px]">2026-05-07</td>
+              <td className="text-[13px] text-ink-700">DPRK SB0416, Lazarus, Ronin Bridge.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">Tornado Cash historic</td>
+              <td className="mono text-[11px] uppercase text-ink-500">informational</td>
+              <td className="mono text-[11px]">delisted 2025-03-21</td>
+              <td className="text-[13px] text-ink-700">Texas Federal Court enjoined re-listing 2025-04-29.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">FATF Targeted Updates</td>
+              <td className="mono text-[11px] uppercase text-verdict-allow">active</td>
+              <td className="mono text-[11px]">June 2025</td>
+              <td className="text-[13px] text-ink-700">R.6, R.7, R.16 attribution sources.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">EU CFSP / UK OFSI / UN / MAS</td>
+              <td className="mono text-[11px] uppercase text-verdict-warn">roadmap</td>
+              <td className="mono text-[11px]">via OpenSanctions</td>
+              <td className="text-[13px] text-ink-700">Most non-OFAC lists rarely contain crypto addresses; integrating for entity-name resolution.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">Issuer freeze (Tether/Circle/Paxos)</td>
+              <td className="mono text-[11px] uppercase text-verdict-allow">active</td>
+              <td className="mono text-[11px]">on-chain</td>
+              <td className="text-[13px] text-ink-700">Public freeze events sweep at counterparty layer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pricing tiers */}
+      <div>
+        <p className="kicker mb-2">Pricing</p>
+        <table className="result-table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Price</th>
+              <th>Includes</th>
+              <th>Best for</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="text-[13px] font-medium">Free preview</td>
+              <td className="mono text-[12px] text-verdict-allow">$0</td>
+              <td className="text-[13px] text-ink-700">All 16 rules. Identical to paid response.</td>
+              <td className="text-[13px] text-ink-700">Evaluation, landing page, dev.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">Pre-flight</td>
+              <td className="mono text-[12px] text-accent">$0.02 / call</td>
+              <td className="text-[13px] text-ink-700">x402-gated. 1-hop sweep + 2-hop material.</td>
+              <td className="text-[13px] text-ink-700">Production agent endpoint.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">
+                Audit dossier{" "}
+                <a
+                  href="https://sentry402.vercel.app"
+                  target="_blank" rel="noreferrer"
+                  className="text-ink-500 border-b border-ink-300 hover:border-accent ml-1"
+                >
+                  ↗ Sentry402
+                </a>
+              </td>
+              <td className="mono text-[12px] text-ink-700">$0.05 / dossier</td>
+              <td className="text-[13px] text-ink-700">Full RiskDossier + holdings + counterparty graph + JSON/PDF.</td>
+              <td className="text-[13px] text-ink-700">Compliance officers, SAR exhibits.</td>
+            </tr>
+            <tr>
+              <td className="text-[13px] font-medium">Enterprise</td>
+              <td className="mono text-[12px] text-ink-700">contract</td>
+              <td className="text-[13px] text-ink-700">SLA, custom rule pack, SOC2 logs, dedicated capacity.</td>
+              <td className="text-[13px] text-ink-700">VASPs, regulated agent platforms.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Quick code copy block */}
+      <div>
+        <p className="kicker mb-2">Quick start · TypeScript</p>
+        <div className="terminal p-4 text-[12px] leading-relaxed">
           <pre className="overflow-x-auto whitespace-pre-wrap">{`async function safeTransfer(to, usd) {
   const r = await fetch(`}<span className="ok">{`'${origin}/api/preflight'`}</span>{`, {
     method: 'POST',
@@ -504,67 +653,21 @@ function IntegrateSection({ origin }: { origin: string }) {
   }).then(r => r.json());
 
   `}<span className="bad">{`if (r.verdict === 'block') throw r;`}</span>{`
-  if (r.verdict === 'warn') return queue(r);
+  if (r.verdict === 'warn') return queueForApproval(r);
   return agent.transfer(to, usd);
 }`}</pre>
         </div>
-
-        <div className="terminal p-4 text-[12px] leading-relaxed">
-          <div className="text-[10px] uppercase tracking-widest text-paper-300 mb-2 dim">
-            shell — curl
-          </div>
-          <pre className="overflow-x-auto whitespace-pre-wrap">{`# 1. unauthenticated → 402 Payment Required
-$ curl -X POST `}<span className="ok">{`'${origin}/api/preflight'`}</span>{` \\
-  -d '{"chain":"eth-mainnet",
-       "to_address":"0xcB74...8bA2D"}'
-HTTP/1.1 `}<span className="warn">{`402 Payment Required`}</span>{`
-
-# 2. with X-PAYMENT signed payload → 200
-$ curl -X POST `}<span className="ok">{`'.../api/preflight'`}</span>{` \\
-  -H "X-PAYMENT: $(sign-x402)" \\
-  -d '...'
-HTTP/1.1 `}<span className="ok">{`200 OK`}</span>{`
-{
-  "verdict": `}<span className="bad">{`"block"`}</span>{`,
-  "score": 100,
-  "severity": "critical",
-  "signals": [...],
-  "evidence": {...}
-}`}</pre>
-        </div>
-      </div>
-
-      <div className="grid sm:grid-cols-3 gap-4 pt-2">
-        <Stat label="Per call" value="$0.02" sub="USDC on Base Sepolia" />
-        <Stat label="p50 latency" value="≈580ms" sub="EVM, hop-1" />
-        <Stat label="Cited rules" value="16" sub="rule pack 0.3.0-mvp" />
       </div>
     </section>
   );
 }
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div className="bg-paper-100 border border-ink-300 p-4">
-      <p className="kicker mb-1">{label}</p>
-      <p className="editorial-headline text-3xl text-ink-950">{value}</p>
-      <p className="text-[12px] text-ink-500 mt-1">{sub}</p>
-    </div>
-  );
-}
-
 /* ============================================================
- * Playground — paste an address, see verdict
+ * Playground
  * ============================================================ */
 function Playground({
-  chain,
-  setChain,
-  toAddress,
-  setToAddress,
-  loading,
-  error,
-  result,
-  check,
+  chain, setChain, toAddress, setToAddress,
+  loading, error, result, check,
 }: {
   chain: string;
   setChain: (s: string) => void;
@@ -576,19 +679,13 @@ function Playground({
   check: (e: React.FormEvent) => void;
 }) {
   return (
-    <section className="space-y-5">
+    <section id="try" className="space-y-5">
       <div className="rule-thick" />
       <div>
-        <p className="kicker mb-2">Try it · GET /api/screen (free preview)</p>
-        <h2 className="editorial-headline text-3xl sm:text-4xl mb-3">
+        <p className="kicker mb-2">Try it · /api/screen (free)</p>
+        <h2 className="editorial-headline text-3xl sm:text-4xl mb-2">
           Paste a destination.
         </h2>
-        <p className="text-ink-700 max-w-prose leading-relaxed">
-          Free preview hits the same engine as the paid endpoint —
-          identical signals, identical metadata, no x402 gate. Production
-          agents use{" "}
-          <code className="mono text-[13px]">POST /api/preflight</code>.
-        </p>
       </div>
 
       <form onSubmit={check} className="bg-paper-100 border border-ink-300 p-5 space-y-4">
@@ -653,11 +750,7 @@ function Playground({
 }
 
 function DemoChip({
-  onPick,
-  addr,
-  tone,
-  label,
-  expected,
+  onPick, addr, tone, label, expected,
 }: {
   onPick: (s: string) => void;
   addr: string;
@@ -746,45 +839,38 @@ function VerdictView({ r }: { r: PreflightResponse }) {
 }
 
 /* ============================================================
- * Engine inventory — 16 cited rules table
+ * Engine inventory
  * ============================================================ */
 function EngineInventory() {
   const rules: Array<{ name: string; severity: Severity; cite: string; note: string }> = [
-    { name: "ofac_direct_match", severity: "critical", cite: "FATF Rec 6 · SAR Type 31y", note: "Subject wallet on active OFAC SDN list" },
-    { name: "sanctions_adjacency", severity: "critical", cite: "FATF Rec 6", note: "Direct counterparty on active sanctions list (1-hop)" },
-    { name: "sanctions_indirect_exposure", severity: "high", cite: "FATF Rec 16 · SAR Type 31a", note: "2-hop exposure via material counterparty (≥$1k flow)" },
-    { name: "stablecoin_dprk_cluster_proximity", severity: "critical", cite: "FATF Rec 7 · SB0416", note: "Direct interaction with SB0416 USDT stablecoin clusters" },
-    { name: "stablecoin_non_cooperative_issuer", severity: "critical", cite: "FATF Rec 7 · MiCA Art 17", note: "Holdings in A7A5 / sanctions-evasion-vehicle stablecoins" },
-    { name: "drainer_pattern", severity: "critical", cite: "SAR Type 35a", note: "≥3 unlimited approvals to a single spender" },
-    { name: "stablecoin_issuer_frozen_match", severity: "high", cite: "FATF Rec 16/20", note: "Counterparty publicly frozen by Tether/Circle/Paxos" },
-    { name: "approval_value_at_risk", severity: "high", cite: "SAR Type 35a", note: "Active approvals expose ≥$1k value-at-risk" },
-    { name: "stablecoin_velocity_typology", severity: "medium", cite: "FATF June 2025 · SAR 31a", note: "≥20 stablecoin tx in 24h (DPRK funnel typology)" },
-    { name: "stablecoin_mica_emt_non_compliant", severity: "medium", cite: "MiCA Art 17/48", note: "Non-EMT stablecoin holdings ≥$1k (EU CASP advisory)" },
-    { name: "high_velocity", severity: "medium", cite: "SAR Type 31a", note: ">50 transactions in 24h" },
+    { name: "ofac_direct_match", severity: "critical", cite: "FATF Rec 6 · SAR 31y", note: "Subject on active OFAC SDN list" },
+    { name: "sanctions_adjacency", severity: "critical", cite: "FATF Rec 6", note: "Direct counterparty sanctioned (1-hop)" },
+    { name: "sanctions_indirect_exposure", severity: "high", cite: "FATF Rec 16", note: "2-hop via material counterparty (≥$1k)" },
+    { name: "stablecoin_dprk_cluster_proximity", severity: "critical", cite: "FATF Rec 7 · SB0416", note: "Direct interaction with SB0416 USDT clusters" },
+    { name: "stablecoin_non_cooperative_issuer", severity: "critical", cite: "MiCA Art 17", note: "A7A5 / sanctions-evasion stablecoin holdings" },
+    { name: "drainer_pattern", severity: "critical", cite: "SAR 35a", note: "≥3 unlimited approvals to one spender" },
+    { name: "stablecoin_issuer_frozen_match", severity: "high", cite: "FATF Rec 16/20", note: "Counterparty frozen by Tether/Circle/Paxos" },
+    { name: "approval_value_at_risk", severity: "high", cite: "SAR 35a", note: "Approvals expose ≥$1k value-at-risk" },
+    { name: "stablecoin_velocity_typology", severity: "medium", cite: "FATF June 2025", note: "≥20 stablecoin tx in 24h (DPRK funnel)" },
+    { name: "stablecoin_mica_emt_non_compliant", severity: "medium", cite: "MiCA Art 17/48", note: "Non-EMT stablecoin holdings ≥$1k" },
+    { name: "high_velocity", severity: "medium", cite: "SAR 31a", note: ">50 transactions in 24h" },
     { name: "unlimited_approval", severity: "medium", cite: "—", note: "Outstanding uint256-max approvals" },
     { name: "fresh_wallet", severity: "low", cite: "—", note: "True wallet age <7 days" },
-    { name: "tornado_cash_historic_exposure", severity: "low", cite: "Informational", note: "Historic mixer counterparty (TC delisted 2025-03-21)" },
-    { name: "stablecoin_issuer_compliance", severity: "low", cite: "Informational", note: "Stablecoin issuer profile breakdown" },
-    { name: "coverage_advisory", severity: "info", cite: "—", note: "Solana coverage limitation notice" },
+    { name: "tornado_cash_historic_exposure", severity: "low", cite: "informational", note: "Historic mixer (TC delisted 2025-03-21)" },
+    { name: "stablecoin_issuer_compliance", severity: "low", cite: "informational", note: "Stablecoin issuer profile" },
+    { name: "coverage_advisory", severity: "info", cite: "—", note: "Solana coverage limitation" },
   ];
   return (
     <section className="space-y-5">
       <div className="rule-thick" />
       <div>
-        <p className="kicker mb-2">Engine inventory · rule pack 0.3.0-mvp</p>
+        <p className="kicker mb-2">Engine · rule pack 0.3.0-mvp</p>
         <h2 className="editorial-headline text-3xl sm:text-4xl mb-3">
-          Sixteen rules, every one cited.
+          Sixteen rules. <span className="font-serif italic">Every one cited.</span>
         </h2>
         <p className="text-ink-700 max-w-prose leading-relaxed">
-          Every signal carries{" "}
-          <code className="mono text-[13px]">fatf_reference</code> and/or{" "}
-          <code className="mono text-[13px]">fincen_reference</code> fields.
-          The rule pack file is hashed at build time and the SHA-256 stamped
-          into every dossier as{" "}
-          <code className="mono text-[13px]">rule_pack_sha256</code> so a
-          regulator can cross-check that the score was produced by the
-          documented rule set. Bumping a weight without bumping the version
-          string is a build error.
+          Rule pack file is hashed at build time, SHA-256 stamped into every
+          dossier as <code className="mono text-[13px]">rule_pack_sha256</code>.
         </p>
       </div>
       <table className="result-table">
@@ -807,59 +893,6 @@ function EngineInventory() {
               <td className="text-[13px] text-ink-700">{r.note}</td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </section>
-  );
-}
-
-/* ============================================================
- * Verdict spec — small reference table at the bottom
- * ============================================================ */
-function VerdictSpec() {
-  return (
-    <section className="space-y-4">
-      <div className="rule-thick" />
-      <div>
-        <p className="kicker mb-2">Verdict spec</p>
-        <h2 className="editorial-headline text-2xl mb-2">
-          What to do with each verdict.
-        </h2>
-      </div>
-      <table className="result-table">
-        <thead>
-          <tr>
-            <th>Severity</th>
-            <th>Verdict</th>
-            <th>Recommended agent action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="mono text-[12px]">critical</td>
-            <td className="mono text-[12px] text-accent font-semibold">block</td>
-            <td className="text-[13px]">Abort transfer. Do not retry. Log dossier id; route to SAR queue if your firm is a regulated VASP.</td>
-          </tr>
-          <tr>
-            <td className="mono text-[12px]">high</td>
-            <td className="mono text-[12px] text-accent font-semibold">block</td>
-            <td className="text-[13px]">Abort transfer. Optional: retry only after human override.</td>
-          </tr>
-          <tr>
-            <td className="mono text-[12px]">medium</td>
-            <td className="mono text-[12px] text-verdict-warn">warn</td>
-            <td className="text-[13px]">Queue for human approval. Include the dossier and signals in the approval payload.</td>
-          </tr>
-          <tr>
-            <td className="mono text-[12px]">low</td>
-            <td className="mono text-[12px] text-verdict-allow">allow</td>
-            <td className="text-[13px]">Proceed under normal policy. Persist the dossier id for audit retrieval.</td>
-          </tr>
-          <tr>
-            <td className="mono text-[12px]">info</td>
-            <td className="mono text-[12px] text-verdict-allow">allow</td>
-            <td className="text-[13px]">Proceed.</td>
-          </tr>
         </tbody>
       </table>
     </section>
