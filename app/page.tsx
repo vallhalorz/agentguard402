@@ -76,7 +76,6 @@ export default function Home() {
 
   return (
     <div className="space-y-20">
-      <Hero />
       <TestMatrix />
       <Playground
         chain={chain}
@@ -196,95 +195,7 @@ function PriceCard({
   );
 }
 
-/* ============================================================
- * Hero — tightened. Two short paragraphs, one demo response.
- * ============================================================ */
-function Hero() {
-  return (
-    <section className="grid lg:grid-cols-[1.3fr_1fr] gap-12 items-start">
-      <div>
-        <p className="kicker mb-4">Case File · OFAC SB0416 · 2026-03-12</p>
-        <h1 className="editorial-headline text-5xl sm:text-6xl mb-6 text-ink-950">
-          On March 12, Treasury added three
-          <span className="text-accent"> DPRK wallets</span>.
-          <br />
-          <span className="font-serif italic font-normal">
-            Four hours later, an x402 agent paid one.
-          </span>
-        </h1>
-        <p className="lede text-lg text-ink-800 max-w-prose mb-6">
-          Autonomous payment agents do not check sanctions lists. AgentGuard402 is
-          one HTTP call you put in front of every transfer — and the response is{" "}
-          <span className="mono text-ink-950">allow</span>,{" "}
-          <span className="mono text-ink-950">warn</span>, or{" "}
-          <span className="mono text-accent">block</span>, citation-bound, two cents.
-        </p>
 
-        {/* Scope box — what it is / what it isn't */}
-        <div className="grid sm:grid-cols-2 gap-4 mb-6 max-w-prose">
-          <div className="border border-ink-300 bg-paper-100 p-4">
-            <p className="kicker mb-2 text-verdict-allow">What it does</p>
-            <ul className="text-[13px] text-ink-800 space-y-1 leading-snug">
-              <li>· Pre-flight sanctions verdict</li>
-              <li>· 16 cited rules · 1-hop sweep</li>
-              <li>· 2-hop materially-gated exposure</li>
-              <li>· Citation-bound reasoning artifact</li>
-              <li>· Free preview at <code className="mono text-[12px]">/api/screen</code></li>
-            </ul>
-          </div>
-          <div className="border border-ink-300 bg-paper-100 p-4">
-            <p className="kicker mb-2 text-accent">What it doesn&apos;t</p>
-            <ul className="text-[13px] text-ink-800 space-y-1 leading-snug">
-              <li>· File SARs (regulator submission is on you)</li>
-              <li>· Freeze funds (we have no custody)</li>
-              <li>· Provide legal advice</li>
-              <li>· Replace a full KYT vendor</li>
-              <li>· Audit-grade dossiers (
-                <a href="https://sentry402.vercel.app" target="_blank" rel="noreferrer" className="border-b border-ink-300 hover:border-accent">
-                  Sentry402
-                </a>
-                )
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[13px] text-ink-600">
-          <span>Rule pack 0.3.0 · 16 cited rules</span>
-          <span aria-hidden>·</span>
-          <span>Settled on Base Sepolia</span>
-        </div>
-      </div>
-      <aside className="lg:mt-8">
-        <div className="glass p-5 shadow-card">
-          <p className="kicker mb-3">Sample response · POST /api/preflight</p>
-          <pre className="mono text-[12px] leading-relaxed text-ink-900 overflow-x-auto whitespace-pre-wrap break-all">{`{
-  "verdict": `}
-            <span className="text-accent font-bold">{`"block"`}</span>
-            {`,
-  "score": 100,
-  "severity": "critical",
-  "signals": [{
-    "type": "ofac_direct_match",
-    "title": "Subject wallet on
-      active OFAC SDN list:
-      Amnokgang Tech. Co. (DPRK)",
-    "fatf_reference":
-      "FATF Recommendation 6"
-  }],
-  "metadata": {
-    "rule_pack_version":
-      "0.3.0-mvp",
-    "rule_pack_sha256": "9c…f1",
-    "sdn_list_version":
-      "2026-05-07-tc-expanded"
-  }
-}`}</pre>
-        </div>
-      </aside>
-    </section>
-  );
-}
 
 /* ============================================================
  * Coverage matrix
